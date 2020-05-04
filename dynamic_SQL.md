@@ -27,6 +27,9 @@ https://www.postgresql.jp/document/11/html/plpgsql-porting.html#PLPGSQL-PORTING-
 
 ### FUNCTIONから別のFUNCTIONをCALL
 
+* 戻りがないときはperformを使う(select => perform)
+* 複数のfunctionを呼び出せる
+
 ```
 // call対象のfunction　d2, d4は同じようなもの
 CREATE OR REPLACE FUNCTION func_d2()
@@ -52,6 +55,40 @@ RETURNS void AS $$
         BEGIN
                 PERFORM func_d2();
                 PERFORM func_d4();
+                RETURN;
+        END;
+$$ LANGUAGE plpgsql;
+
+// create・起動
+psql -U postgres -f func_d3
+psql -U postgres -c "SELECT func_d3();"
+```
+
+
+
+### FUNCTIONから直接EXECUTE
+
+* 動的SQLでテーブル名も条件も変数とする
+* 公式の方法でオーバーヘッドを小さくする
+
+```
+EXECUTE format('SELECT count(*) FROM %I '
+   'WHERE inserted_by = $1 AND inserted <= $2', tabname)
+   INTO c
+   USING checked_user, checked_date;
+```
+
+```
+// 変数無し
+CREATE OR REPLACE FUNCTION func_d5()
+RETURNS void AS $$
+        BEGIN
+                DROP TABLE IF EXISTS TYPE_SAMPLE;
+                CREATE TABLE TYPE_SAMPLE(
+                        user_id numeric,
+                        user_name text,
+                        primary key(user_id)
+                );
                 RETURN;
         END;
 $$ LANGUAGE plpgsql;
