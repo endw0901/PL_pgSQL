@@ -18,7 +18,7 @@ vim xxxxx
 
 // コンテナ上のpsqlコマンド
 psql -U postgres -f ファイル名
-
+```
 
 ## テーブル作成
 
