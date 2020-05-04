@@ -1,11 +1,10 @@
 # Basics
 
 
-## 
+## 関数作成
 
 ```
 // 関数作成
-
 CREATE OR REPLACE FUNCTION helloplpgsql()
 RETURNS text
 AS $$
