@@ -32,7 +32,7 @@ SELECT func_d1(1);
 ```
 
 
-## テーブル作成
+## テーブル作成：関数
 
 ```
 // 関数
@@ -49,6 +49,16 @@ RETURNS void AS $$
         END;
 $$ LANGUAGE plpgsql;
 
+// 起動
+psql -U postgres -c "SELECT func_d2();"
+```
+
+## テーブル作成：プロシージャ
+
+* カーソル・トランザクションを切らないとだめのよう
+
+
+```
 // プロシージャ
 CREATE OR REPLACE PROCEDURE proc_d2()
         BEGIN
@@ -62,6 +72,5 @@ CREATE OR REPLACE PROCEDURE proc_d2()
 $$ LANGUAGE plpgsql;
 
 // 起動
-SELECT func_d2();
-SELECT proc_d2();
+psql -U postgres -c "SELECT proc_d2();"
 ```
