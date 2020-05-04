@@ -25,28 +25,38 @@ EXECUTE format('SELECT count(*) FROM %I '
 https://www.postgresql.jp/document/11/html/plpgsql-porting.html#PLPGSQL-PORTING-EX2
 
 
+### FUNCTIONから別のFUNCTIONをCALL
 
 ```
-// ELSIFでもELSEIFでもOK
-CREATE OR REPLACE FUNCTION func4_1(integer)
-RETURNS text AS $$
-        DECLARE
-                var ALIAS FOR $1;
+// call対象のfunction　d2, d4は同じようなもの
+CREATE OR REPLACE FUNCTION func_d2()
+RETURNS void AS $$
         BEGIN
-                IF var > 10 THEN
-                        RETURN '10以上です';
-                ELSEIF var = 10 THEN
-                        RETURN '10です';
-                ELSE
-                        RETURN '10未満です';
-                END IF;
+                DROP TABLE IF EXISTS TYPE_SAMPLE;
+                CREATE TABLE TYPE_SAMPLE(
+                        user_id numeric,
+                        user_name text,
+                        primary key(user_id)
+                );
+                RETURN;
         END;
 $$ LANGUAGE plpgsql;
 
-// 起動
+// create
+psql -U postgres -f func_d2
 
-   
-psql -U postgres -c "SELECT func4_1(8);"
-psql -U postgres -c "SELECT func4_1(10);"
-psql -U postgres -c "SELECT func4_1(11);"
+
+// call元 ※戻り値がない場合はselectの代わりにperformとする。selectはエラーとなる
+CREATE OR REPLACE FUNCTION func_d3()
+RETURNS void AS $$
+        BEGIN
+                PERFORM func_d2();
+                PERFORM func_d4();
+                RETURN;
+        END;
+$$ LANGUAGE plpgsql;
+
+// create・起動
+psql -U postgres -f func_d3
+psql -U postgres -c "SELECT func_d3();"
 ```
