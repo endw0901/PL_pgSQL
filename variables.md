@@ -70,3 +70,28 @@ $$ LANGUAGE plpgsql;
 SELECT func3_4(6);
 ```
 
+
+## 変数宣言時に、変数の型を指定したテーブルの型と同じものを%TYPE引用して宣言
+
+```
+// テーブル作成
+CREATE TABLE TYPE_SAMPLE(
+        user_id numeric,
+        user_name text,
+        primary key(user_id)
+);
+
+// %TYPEで型をテーブルから引用
+CREATE OR REPLACE FUNCTION func3_6()
+RETURNS text AS $$
+  DECLARE
+    name TYPE_SAMPLE.user_name%TYPE;
+  BEGIN
+    name := 'sample text';
+    RETURN name;
+  END;
+$$ LANGUAGE plpgsql;
+
+// 起動(コンテナ上で)
+psql -U postgres -c "SELECT func3_6();"
+```
