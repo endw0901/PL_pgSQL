@@ -12,3 +12,4 @@ https://qiita.com/spaciba_h_t/items/e9dac4de27c7d44c5be6
 ## 調査が必要
 
 * ロギング
+https://www.kakiro-web.com/postgresql/postgresql-sql-log-system.html
