@@ -30,13 +30,6 @@ CREATE TABLE TYPE_SAMPLE(
         user_name text,
         primary key(user_id)
 );
-
-// テーブル作成
-CREATE TABLE TYPE_SAMPLE(
-        user_id numeric,
-        user_name text,
-        primary key(user_id)
-);
 ```
 
 ## テーブルに値INSERT
