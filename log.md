@@ -1,8 +1,7 @@
 # ログ
 
-## ロギング
+## log
 
-* ロギング
 
 https://www.postgresql.jp/document/9.4/html/runtime-config-logging.html
 
