@@ -24,6 +24,10 @@ https://qiita.com/YumaInaura/items/3432cc3f8a8553e05a6e
 
 
 ```
+// vimインストール
+apt-get update
+apt-get install vim
+
 // SQLコマンド作成
 cd /usr/postgre_test
 touch XXXX
@@ -32,4 +36,10 @@ vim xxxxx
 // コンテナ上のpsqlコマンド
 psql -U postgres -f ファイル名
 
+// DB一覧(コンテナ上で)
+psql -U postgres -l
+
+// テーブル一覧(postgres上で)
+psql -U postgres
+\df
 ```
