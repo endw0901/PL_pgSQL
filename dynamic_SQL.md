@@ -109,22 +109,37 @@ EXECUTE format('SELECT count(*) FROM %I '
 
 ```
 // テーブル名を文字列の引数で受け取り、EXECUTE+formatで変数付きの実行
-CREATE OR REPLACE FUNCTION func_d5(char)
+CREATE OR REPLACE FUNCTION func_d6(char, char, integer)
 RETURNS void AS $$
         DECLARE
                 var_tblname ALIAS FOR $1;
+                var_OUT ALIAS FOR $2;
+                var_user_id ALIAS FOR $3;
         BEGIN
-                EXECUTE format('DROP TABLE IF EXISTS %I ', var_tblname);
-                EXECUTE format('CREATE TABLE %I(
-                        user_id numeric,
-                        user_name text,
-                        primary key(user_id)
-                ) ', var_tblname);
+                /** 引数1のテーブル名でdrop＆create **/
+                PERFORM func_d5(var_tblname);
+                /** サンプルデータ挿入 **/
+                EXECUTE format('INSERT INTO %I VALUES (1,''john'')', var_tblname);
+                /** 引数2のkeyで表示 **/
+                EXECUTE format('DROP TABLE IF EXISTS %I ', var_OUT);
+                EXECUTE format('
+                        CREATE TABLE %I AS
+                        SELECT
+                                *
+                        FROM %I
+                        WHERE user_id = $1
+                        ', var_OUT, var_tblname)
+                        USING var_user_id;
                 RETURN;
         END;
 $$ LANGUAGE plpgsql;
 
-// create・起動(文字列でテーブル名を引き渡す)
-psql -U postgres -f func_d5
-psql -U postgres -c "SELECT func_d6();"
+// create
+psql -U postgres -f func_d6
+// 起動＋引数（入力テーブル、出力テーブル、key）
+psql -U postgres -c "select func_d6('type_sample6', 't6', 1);"
+// 作成したテーブルを確認
+psql -U postgres -c "select * from t6;"
 ```
+
+* %I, %I→formatで指定した順に指定（上記例参照）
