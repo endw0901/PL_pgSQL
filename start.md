@@ -36,6 +36,12 @@ vim xxxxx
 // コンテナ上のpsqlコマンド
 psql -U postgres -f ファイル名
 
+```
+
+
+## DB・テーブル一覧確認
+
+```
 // DB一覧(コンテナ上で)
 psql -U postgres -l
 
