@@ -51,3 +51,22 @@ $$ LANGUAGE plpgsql;
 SELECT func3_3(5);
 ```
 
+
+
+## 引数で変数の型のみ指定＆本文で引数の位置と変数名を指定
+
+```
+// 
+CREATE OR REPLACE FUNCTION func3_4(integer)
+RETURNS integer AS $$
+  DECLARE
+    var ALIAS FOR $1;
+  BEGIN
+    RETURN var;
+  END;
+$$ LANGUAGE plpgsql;
+
+// 起動
+SELECT func3_4(6);
+```
+
