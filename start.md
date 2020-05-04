@@ -42,10 +42,12 @@ psql -U postgres -f ファイル名
 ## DB・テーブル一覧確認
 
 ```
-// DB一覧(コンテナ上で)
+// DB一覧
 psql -U postgres -l
 
-// テーブル一覧(postgres上で)
-psql -U postgres
-\df
+// テーブル一覧
+psql -U postgres -c "dt"
+
+// 関数一覧
+psql -U postgres -c "df"
 ```
