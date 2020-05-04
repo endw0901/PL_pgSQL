@@ -66,10 +66,39 @@ psql -U postgres -c "SELECT func_d3();"
 
 
 
-### FUNCTIONから直接EXECUTE
+### FUNCTIONから直接EXECUTE（テーブル名を動的SQL)
 
 * 動的SQLでテーブル名も条件も変数とする
 * 公式の方法でオーバーヘッドを小さくする
+
+
+```
+// テーブル名を文字列の引数で受け取り、EXECUTE+formatで変数付きの実行
+CREATE OR REPLACE FUNCTION func_d5(char)
+RETURNS void AS $$
+        DECLARE
+                var_tblname ALIAS FOR $1;
+        BEGIN
+                EXECUTE format('DROP TABLE IF EXISTS %I ', var_tblname);
+                EXECUTE format('CREATE TABLE %I(
+                        user_id numeric,
+                        user_name text,
+                        primary key(user_id)
+                ) ', var_tblname);
+                RETURN;
+        END;
+$$ LANGUAGE plpgsql;
+
+// create・起動(文字列でテーブル名を引き渡す)
+psql -U postgres -f func_d5
+psql -U postgres -c "SELECT func_d5('TYPE_SAMPLE5');"
+```
+
+
+### 条件も変数とする
+
+* 上のfunc_d5を別の関数からcallして、その後selectする
+
 
 ```
 EXECUTE format('SELECT count(*) FROM %I '
@@ -79,21 +108,23 @@ EXECUTE format('SELECT count(*) FROM %I '
 ```
 
 ```
-// 変数無し
-CREATE OR REPLACE FUNCTION func_d5()
+// テーブル名を文字列の引数で受け取り、EXECUTE+formatで変数付きの実行
+CREATE OR REPLACE FUNCTION func_d5(char)
 RETURNS void AS $$
+        DECLARE
+                var_tblname ALIAS FOR $1;
         BEGIN
-                DROP TABLE IF EXISTS TYPE_SAMPLE;
-                CREATE TABLE TYPE_SAMPLE(
+                EXECUTE format('DROP TABLE IF EXISTS %I ', var_tblname);
+                EXECUTE format('CREATE TABLE %I(
                         user_id numeric,
                         user_name text,
                         primary key(user_id)
-                );
+                ) ', var_tblname);
                 RETURN;
         END;
 $$ LANGUAGE plpgsql;
 
-// create・起動
-psql -U postgres -f func_d3
-psql -U postgres -c "SELECT func_d3();"
+// create・起動(文字列でテーブル名を引き渡す)
+psql -U postgres -f func_d5
+psql -U postgres -c "SELECT func_d6();"
 ```
